@@ -3,31 +3,31 @@ package fr.lewon.circuit.designer.model.road
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Obstacle(val xFrom: Int, val yFrom: Int, val xTo: Int, val yTo: Int) {
+class Obstacle(val xFrom: Double, val yFrom: Double, val xTo: Double, val yTo: Double) {
 
     companion object {
         fun generateCurve(
-                centerX: Int,
-                centerY: Int,
-                radianFrom: Double,
-                radianSize: Double,
-                radiusX: Int,
-                radiusY: Int,
-                arraySize: Int
+            centerX: Double,
+            centerY: Double,
+            radianFrom: Double,
+            radianSize: Double,
+            radiusX: Double,
+            radiusY: Double,
+            arraySize: Int
         ): List<Obstacle> {
             val obstacles = ArrayList<Obstacle>()
-            var xFrom = radiusX.toDouble() * cos(radianFrom)
-            var yFrom = -radiusY.toDouble() * sin(radianFrom)
+            var xFrom = radiusX * cos(radianFrom)
+            var yFrom = -radiusY * sin(radianFrom)
             for (i in 1..arraySize) {
                 val t: Double = radianFrom + radianSize * i.toDouble() / arraySize.toDouble()
-                val x = radiusX.toDouble() * cos(t)
-                val y = -radiusY.toDouble() * sin(t)
+                val x = radiusX * cos(t)
+                val y = -radiusY * sin(t)
                 obstacles.add(
                     Obstacle(
-                        centerX + xFrom.toInt(),
-                        centerY + yFrom.toInt(),
-                        centerX + x.toInt(),
-                        centerY + y.toInt()
+                        centerX + xFrom,
+                        centerY + yFrom,
+                        centerX + x,
+                        centerY + y
                     )
                 )
                 xFrom = x

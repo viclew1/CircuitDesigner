@@ -3,6 +3,7 @@ package fr.lewon.circuit.designer.gui
 import fr.lewon.circuit.designer.model.Circuit
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.layout.Pane
@@ -12,7 +13,9 @@ import kotlin.system.exitProcess
 
 class CircuitDesignerController : Initializable {
 
-    private var newTabCpt = 1
+
+    @FXML
+    private lateinit var roadElementsScrollPane: ScrollPane
 
     @FXML
     private lateinit var circuitsTabPane: TabPane
@@ -20,10 +23,15 @@ class CircuitDesignerController : Initializable {
     @FXML
     private lateinit var tabContentPane: Pane
 
+    private val roadElementListPane =
+        RoadElementListPane { circuitsTabPane.selectionModel.selectedItem.content as CircuitPane }
+    private var newTabCpt = 1
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         if (circuitsTabPane.tabs.isEmpty()) {
             newCircuit()
         }
+        roadElementsScrollPane.content = roadElementListPane
     }
 
     fun newCircuit() {

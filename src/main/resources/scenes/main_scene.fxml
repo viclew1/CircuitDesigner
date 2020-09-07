@@ -70,10 +70,7 @@
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </Label>
-                                <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                                    <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="264.0" style="-fx-background-color: #454c52;" />
-                                    </content>
+                                <ScrollPane fx:id="roadElementsScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
