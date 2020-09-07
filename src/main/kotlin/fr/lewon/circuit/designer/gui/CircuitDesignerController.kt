@@ -4,9 +4,8 @@ import fr.lewon.circuit.designer.model.Circuit
 import fr.lewon.circuit.designer.model.geometry.Point
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.ScrollPane
-import javafx.scene.control.Tab
-import javafx.scene.control.TabPane
+import javafx.scene.control.*
+import javafx.scene.layout.VBox
 import java.net.URL
 import java.util.*
 import kotlin.math.max
@@ -20,12 +19,25 @@ class CircuitDesignerController : Initializable {
     private lateinit var roadElementsScrollPane: ScrollPane
 
     @FXML
+    private lateinit var toolsPane: VBox
+
+    @FXML
     private lateinit var circuitsTabPane: TabPane
 
     private lateinit var dragStartPoint: Point
 
     private val roadElementListPane =
         RoadElementListPane { circuitsTabPane.selectionModel.selectedItem.content as CircuitPane }
+    private val buttons = listOf(
+        ButtonDescriptor("Rotate left", "rotate_left.png")
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).rotateLeft() },
+        ButtonDescriptor("Rotate right", "rotate_right.png")
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).rotateRight() },
+        ButtonDescriptor("Export", "export.png")
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).exportCircuit() },
+        ButtonDescriptor("Remove", "remove.png")
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).removeRoad() }
+    )
     private var newTabCpt = 1
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
@@ -33,6 +45,22 @@ class CircuitDesignerController : Initializable {
             newCircuit()
         }
         roadElementsScrollPane.content = roadElementListPane
+
+        val tileSz = toolsPane.minWidth - toolsPane.insets.left - toolsPane.insets.right
+        for (btnDesc in buttons) {
+            val btn = Button()
+            btn.setOnAction { btnDesc.action.invoke() }
+            Tooltip.install(btn, Tooltip(btnDesc.name))
+            btn.style = "-fx-background-image: url(${btnDesc.imagePath});" +
+                    "-fx-background-size: ${tileSz * 4 / 5} ${tileSz * 4 / 5};" +
+                    "-fx-background-repeat: no-repeat;" +
+                    "-fx-background-position: center;"
+            btn.minWidth = tileSz
+            btn.minHeight = tileSz
+            btn.maxWidth = tileSz
+            btn.maxHeight = tileSz
+            toolsPane.children.add(btn)
+        }
 
         circuitsTabPane.setOnScroll {
             val circuitPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitPane
@@ -53,7 +81,8 @@ class CircuitDesignerController : Initializable {
             val circuitPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitPane
             circuitPane.translate(
                 circuitPane.dx + it.sceneX - dragStartPoint.x,
-                circuitPane.dy + it.sceneY - dragStartPoint.y)
+                circuitPane.dy + it.sceneY - dragStartPoint.y
+            )
             dragStartPoint = Point(it.sceneX, it.sceneY)
             adaptTranslate(circuitPane)
         }

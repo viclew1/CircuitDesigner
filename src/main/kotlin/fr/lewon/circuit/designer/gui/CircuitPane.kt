@@ -1,19 +1,14 @@
 package fr.lewon.circuit.designer.gui
 
 import fr.lewon.circuit.designer.model.Circuit
-import fr.lewon.circuit.designer.model.geometry.Point
 import fr.lewon.circuit.designer.model.road.RoadElement
 import javafx.geometry.Insets
 import javafx.scene.Node
-import javafx.scene.control.Button
-import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import javafx.scene.transform.Transform
-import org.jetbrains.kotlin.backend.common.phaser.transform
 import kotlin.math.max
 import kotlin.math.min
 
@@ -35,25 +30,8 @@ class CircuitPane(val circuit: Circuit) : GridPane() {
     val minSize = 16.0
     val maxSize = 96.0
 
-    private val buttons = listOf(
-        ButtonDescriptor("Rotate left", "rotate_left.png") { selectedTiles.forEach { it.rotateLeft() } },
-        ButtonDescriptor("Rotate right", "rotate_right.png") { selectedTiles.forEach { it.rotateRight() } },
-        ButtonDescriptor("Remove", "remove.png") { selectedTiles.forEach { it.updateRoadElement(null) } },
-        ButtonDescriptor("Export", "export.png") { exportCircuit() }
-    )
-
     init {
         padding = Insets(5.0)
-
-        for (row in 0 until 16) {
-            row.takeIf { it < buttons.size }?.let {
-                Button().also {
-                    it.setOnAction { buttons[row].action.invoke() }
-                    Tooltip.install(it, Tooltip(buttons[row].name))
-                    add(it, 0, row)
-                }
-            }
-        }
         for (row in 0 until 16) {
             roadElements.add(ArrayList())
             colors.add(ArrayList())
@@ -78,21 +56,21 @@ class CircuitPane(val circuit: Circuit) : GridPane() {
 
                 stack.toBack()
 
-                add(stack, col + 1, row)
+                add(stack, col, row)
             }
         }
         updateVisual()
     }
 
     fun getRealWidth(): Double {
-        val firstNode = getNodeByRowColIndex(0, 0) as Button? ?: return 0.0
-        val lastNode = getNodeByRowColIndex(0, 16) as StackPane? ?: return 0.0
+        val firstNode = getNodeByRowColIndex(0, 0) as StackPane? ?: return 0.0
+        val lastNode = getNodeByRowColIndex(0, 15) as StackPane? ?: return 0.0
         return lastNode.layoutX + lastNode.width - firstNode.layoutX
     }
 
     fun getRealHeight(): Double {
-        val firstNode = getNodeByRowColIndex(0, 1) as StackPane? ?: return 0.0
-        val lastNode = getNodeByRowColIndex(15, 1) as StackPane? ?: return 0.0
+        val firstNode = getNodeByRowColIndex(0, 0) as StackPane? ?: return 0.0
+        val lastNode = getNodeByRowColIndex(15, 0) as StackPane? ?: return 0.0
         return lastNode.layoutY + lastNode.height - firstNode.layoutY + 30
     }
 
@@ -101,7 +79,7 @@ class CircuitPane(val circuit: Circuit) : GridPane() {
         dy = translateY
         for (row in 0 until 16) {
             for (col in 0 until 16) {
-                val child = getNodeByRowColIndex(row, col + 1) as StackPane?
+                val child = getNodeByRowColIndex(row, col) as StackPane?
                 child?.translateX = dx
                 child?.translateY = dy
             }
@@ -109,20 +87,9 @@ class CircuitPane(val circuit: Circuit) : GridPane() {
     }
 
     fun updateVisual() {
-        for (row in buttons.indices) {
-            val child = getNodeByRowColIndex(row, 0) as Button?
-            child?.style = "-fx-background-image: url(${buttons[row].imagePath});" +
-                "-fx-background-size: ${tileSz * 4 / 5} ${tileSz * 4 / 5};" +
-                "-fx-background-repeat: no-repeat;" +
-                "-fx-background-position: center;"
-            child?.minWidth = tileSz
-            child?.minHeight = tileSz
-            child?.maxWidth = tileSz
-            child?.maxHeight = tileSz
-        }
         for (row in 0 until 16) {
             for (col in 0 until 16) {
-                val child = getNodeByRowColIndex(row, col + 1) as StackPane?
+                val child = getNodeByRowColIndex(row, col) as StackPane?
                 child?.minWidth = tileSz
                 child?.minHeight = tileSz
                 child?.maxWidth = tileSz
@@ -261,7 +228,19 @@ class CircuitPane(val circuit: Circuit) : GridPane() {
     }
 
     fun exportCircuit() {
+        println("Export circuit")
+    }
 
+    fun removeRoad() {
+        selectedTiles.forEach { it.updateRoadElement(null) }
+    }
+
+    fun rotateRight() {
+        selectedTiles.forEach { it.rotateRight() }
+    }
+
+    fun rotateLeft() {
+        selectedTiles.forEach { it.rotateLeft() }
     }
 
 }

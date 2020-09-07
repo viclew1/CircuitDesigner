@@ -11,9 +11,10 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minHeight="750.0" minWidth="900.0" prefHeight="750.0" prefWidth="900.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.lewon.circuit.designer.gui.CircuitDesignerController">
+<VBox minHeight="750.0" minWidth="900.0" prefHeight="750.0" prefWidth="900.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.lewon.circuit.designer.gui.CircuitDesignerController">
     <children>
         <MenuBar stylesheets="@style.css">
             <menus>
@@ -87,17 +88,22 @@
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </Label>
-                                <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                                    <VBox.margin>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </VBox.margin>
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding>
-                           <content>
-                              <TabPane fx:id="circuitsTabPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #454c52; -fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" />
-                           </content>
-                                </ScrollPane>
+                        <HBox style="-fx-border-color: black;" VBox.vgrow="SOMETIMES">
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                           <children>
+                              <VBox fx:id="toolsPane" maxWidth="50.0" minWidth="50.0" prefHeight="200.0" prefWidth="50.0" style="-fx-border-color: black;" HBox.hgrow="NEVER">
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </VBox>
+                              <TabPane fx:id="circuitsTabPane" prefHeight="676.0" prefWidth="560.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="SOMETIMES" />
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </HBox>
                             </children>
                         </VBox>
                     </items>
