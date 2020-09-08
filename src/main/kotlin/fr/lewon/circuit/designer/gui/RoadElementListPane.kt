@@ -25,14 +25,15 @@ class RoadElementListPane(val circuitPaneSupplier: () -> CircuitPane) : GridPane
             add(Separator(Orientation.HORIZONTAL), col, row++, 3, 1)
             add(Label(category.categoryName), col, row++, 3, 1)
             add(Separator(Orientation.HORIZONTAL), col, row++, 3, 1)
-            for (element in category.roadElements) {
+            for (elementBuilder in category.roadElementBuilders) {
+                val element = elementBuilder.invoke()
                 add(RoadElementPane(row, col).also {
                     it.updateRoadElement(element)
                     it.prefWidthProperty().bind(widthProperty().divide(colCount))
                     it.prefHeightProperty().bind(it.prefWidthProperty())
                     it.minHeightProperty().bind(it.prefWidthProperty())
                     Tooltip.install(it, Tooltip(element.name))
-                    it.setOnMouseClicked { circuitPaneSupplier.invoke().updateRoadElement(element) }
+                    it.setOnMouseClicked { circuitPaneSupplier.invoke().updateRoadElement(elementBuilder.invoke()) }
                 }, col, row, 1, 1)
                 col++
                 if (col == colCount) {

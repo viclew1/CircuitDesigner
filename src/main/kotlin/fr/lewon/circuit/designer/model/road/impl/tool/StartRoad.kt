@@ -4,7 +4,7 @@ import fr.lewon.circuit.designer.model.road.Obstacle
 import fr.lewon.circuit.designer.model.road.RoadElement
 import javafx.scene.paint.Color
 
-object StartRoad : RoadElement(
+class StartRoad : RoadElement(
     "Start road", 1, 1, listOf(
         Obstacle(0.2, 0.5, 0.2, 0.0),
         Obstacle(0.8, 0.5, 0.8, 0.0),

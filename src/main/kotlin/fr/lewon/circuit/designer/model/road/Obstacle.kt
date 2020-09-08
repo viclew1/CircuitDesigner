@@ -3,7 +3,7 @@ package fr.lewon.circuit.designer.model.road
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Obstacle(val xFrom: Double, val yFrom: Double, val xTo: Double, val yTo: Double) {
+class Obstacle(var xFrom: Double, var yFrom: Double, var xTo: Double, var yTo: Double) {
 
     companion object {
         fun generateCurve(
