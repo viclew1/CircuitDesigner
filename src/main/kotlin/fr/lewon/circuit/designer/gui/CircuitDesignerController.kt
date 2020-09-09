@@ -27,16 +27,16 @@ class CircuitDesignerController : Initializable {
     private lateinit var dragStartPoint: Point
 
     private val roadElementListPane =
-        RoadElementListPane { circuitsTabPane.selectionModel.selectedItem.content as CircuitPane }
+        RoadElementListPane { circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane }
     private val buttons = listOf(
         ButtonDescriptor("Rotate left", "rotate_left.png")
-        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).rotateLeft() },
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane).rotateLeft() },
         ButtonDescriptor("Rotate right", "rotate_right.png")
-        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).rotateRight() },
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane).rotateRight() },
         ButtonDescriptor("Export", "export.png")
-        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).exportCircuit() },
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane).exportCircuit() },
         ButtonDescriptor("Remove", "remove.png")
-        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitPane).removeRoad() }
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane).removeRoad() }
     )
     private var newTabCpt = 1
 
@@ -63,7 +63,7 @@ class CircuitDesignerController : Initializable {
         }
 
         circuitsTabPane.setOnScroll {
-            val circuitPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitPane
+            val circuitPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane
             if (it.deltaY > 0) {
                 circuitPane.tileSz += 8
             } else {
@@ -78,7 +78,7 @@ class CircuitDesignerController : Initializable {
             dragStartPoint = Point(it.sceneX, it.sceneY)
         }
         circuitsTabPane.setOnMouseDragged {
-            val circuitPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitPane
+            val circuitPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane
             circuitPane.translate(
                 circuitPane.dx + it.sceneX - dragStartPoint.x,
                 circuitPane.dy + it.sceneY - dragStartPoint.y
@@ -88,14 +88,14 @@ class CircuitDesignerController : Initializable {
         }
     }
 
-    private fun adaptTranslate(circuitPane: CircuitPane) {
-        val minTranslateX = min(0.0, circuitsTabPane.width - circuitPane.getRealWidth() - 10)
-        val minTranslateY = min(0.0, circuitsTabPane.height - circuitPane.getRealHeight() - 10)
-        val maxTranslateX = max(0.0, circuitsTabPane.width - circuitPane.getRealWidth() - 10)
-        val maxTranslateY = max(0.0, circuitsTabPane.height - circuitPane.getRealHeight() - 10)
-        val dx = max(minTranslateX, min(maxTranslateX, circuitPane.dx))
-        val dy = max(minTranslateY, min(maxTranslateY, circuitPane.dy))
-        circuitPane.translate(dx, dy)
+    private fun adaptTranslate(circuitEditorPane: CircuitEditorPane) {
+        val minTranslateX = min(0.0, circuitsTabPane.width - circuitEditorPane.getRealWidth() - 10)
+        val minTranslateY = min(0.0, circuitsTabPane.height - circuitEditorPane.getRealHeight() - 10)
+        val maxTranslateX = max(0.0, circuitsTabPane.width - circuitEditorPane.getRealWidth() - 10)
+        val maxTranslateY = max(0.0, circuitsTabPane.height - circuitEditorPane.getRealHeight() - 10)
+        val dx = max(minTranslateX, min(maxTranslateX, circuitEditorPane.dx))
+        val dy = max(minTranslateY, min(maxTranslateY, circuitEditorPane.dy))
+        circuitEditorPane.translate(dx, dy)
     }
 
     fun newCircuit() {
@@ -107,7 +107,7 @@ class CircuitDesignerController : Initializable {
     private fun generateCircuitTab(): Tab {
         val tab = Tab("Untitled ${newTabCpt++}")
         tab.setOnClosed { onCircuitClosed() }
-        val circuitPane = CircuitPane(Circuit())
+        val circuitPane = CircuitEditorPane(Circuit())
         tab.content = circuitPane
         return tab
     }
