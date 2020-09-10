@@ -2,15 +2,18 @@ package fr.lewon.circuit.designer.gui
 
 import fr.lewon.circuit.designer.model.Circuit
 import fr.lewon.circuit.designer.model.geometry.Point
+import fr.lewon.circuit.designer.model.road.RoadElementType
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.layout.VBox
+import javafx.stage.Modality
 import javafx.stage.Stage
 import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.exitProcess
@@ -146,14 +149,54 @@ class CircuitDesignerController : Initializable {
     }
 
     private fun openTest() {
+        val currentCircuitEditorPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane
+        val circuit = currentCircuitEditorPane.circuit
+        validateCircuit(circuit)
+            .takeIf { it.isNotEmpty() }
+            ?.let {
+                displayError("Circuit validation", it)
+                return
+            }
         val loader = FXMLLoader(javaClass.getResource("/scenes/circuit_scene.fxml"))
         val root = loader.load() as VBox
-        val currentCircuitEditorPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane
         val controller = loader.getController() as CircuitTestController
-        controller.initCircuit(currentCircuitEditorPane.circuit)
+        controller.initCircuit(circuit)
         val stage = Stage()
+        stage.initModality(Modality.WINDOW_MODAL)
+        stage.initOwner(circuitsTabPane.scene.window as Stage)
         stage.scene = Scene(root)
         stage.show()
+    }
+
+    private fun validateCircuit(circuit: Circuit): List<String> {
+        val errors = ArrayList<String>()
+        val allElements = circuit.getAllElements()
+        val starts = allElements.filter { it.type == RoadElementType.START }
+        val finishes = allElements.filter { it.type == RoadElementType.FINISH }
+        val laps = allElements.filter { it.type == RoadElementType.LAP }
+
+        if (starts.isEmpty() && laps.isEmpty()) {
+            errors.add("A circuit needs a start")
+        }
+        if (starts.size + laps.size > 1) {
+            errors.add("A circuit can't have more than one start")
+        }
+        if (finishes.isEmpty() && laps.isEmpty()) {
+            errors.add("A circuit needs a finish line")
+        }
+        if (finishes.size + laps.size > 1) {
+            errors.add("A circuit can't have more than one finish line")
+        }
+        return errors
+    }
+
+    private fun displayError(title: String, errors: List<String>) {
+        val alert = Alert(Alert.AlertType.ERROR)
+        alert.title = title
+        alert.headerText = null
+        alert.initOwner(circuitsTabPane.scene.window as Stage)
+        alert.contentText = errors.joinToString("\n")
+        alert.showAndWait()
     }
 
 }

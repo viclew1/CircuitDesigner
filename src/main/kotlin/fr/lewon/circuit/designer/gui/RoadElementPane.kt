@@ -33,7 +33,7 @@ class RoadElementPane(val row: Int, val col: Int) : Pane() {
                         it.endXProperty().bind(widthProperty().multiply(obstacle.xTo))
                         it.endYProperty().bind(heightProperty().multiply(obstacle.yTo))
                         it.strokeWidth = 3.0
-                        it.stroke = element.color
+                        it.stroke = element.type.color
                     }
                 )
             }

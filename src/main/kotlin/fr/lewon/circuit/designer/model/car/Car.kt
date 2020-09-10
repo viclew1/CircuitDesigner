@@ -7,20 +7,40 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Car(private val mass: Double, private val frontSz: Double, private val sideSz: Double, val color: Color) {
+class Car(private val mass: Double, frontSz: Double, sideSz: Double, val color: Color) {
 
-    var angle = Math.PI / 2
+    var angle = 0.0
     var wheelAngle = angle
     private var enginePower = 0.0
     private var position = Vector(0.0, 0.0)
-    val initialPosFrontRight = Vector(frontSz / 2, -sideSz / 2)
-    val initialPosFrontLeft = Vector(-frontSz / 2, -sideSz / 2)
-    val initialPosBackRight = Vector(frontSz / 2, sideSz / 2)
-    val initialPosBackLeft = Vector(-frontSz / 2, sideSz / 2)
+
+    private val initialPosFrontRightWheel = Vector(sideSz / 3, frontSz / 2)
+    private val initialPosFrontLeftWheel = Vector(sideSz / 3, - frontSz / 2)
+    private val initialPosBackRightWheel = Vector(- sideSz / 3, frontSz / 2)
+    private val initialPosBackLeftWheel = Vector(- sideSz / 3, - frontSz / 2)
+
+    private val initialPosFrontRight = Vector(sideSz / 2, frontSz / 2)
+    private val initialPosFrontLeft = Vector(sideSz / 2, - frontSz / 2)
+    private val initialPosBackRight = Vector(- sideSz / 2, frontSz / 2)
+    private val initialPosBackLeft = Vector(- sideSz / 2, - frontSz / 2)
+
+    var posFrontRightWheel = initialPosFrontRightWheel
+        private set
+    var posFrontLeftWheel = initialPosFrontLeftWheel
+        private set
+    var posBackRightWheel = initialPosBackRightWheel
+        private set
+    var posBackLeftWheel = initialPosBackLeftWheel
+        private set
+
     var posFrontRight = initialPosFrontRight
+        private set
     var posFrontLeft = initialPosFrontLeft
+        private set
     var posBackRight = initialPosBackRight
+        private set
     var posBackLeft = initialPosBackLeft
+        private set
 
     private var acceleration = Vector(0.0, 0.0)
     private var velocityVector = Vector(0.0, 0.0)
@@ -88,26 +108,14 @@ class Car(private val mass: Double, private val frontSz: Double, private val sid
 
     private fun updatePosition(dtSec: Double) {
         position = position.getVectorSum(velocityVector.getVectorMult(dtSec))
-        posFrontRight = rotateAround(
-            Vector(position.x + initialPosFrontRight.x, position.y + initialPosFrontRight.y),
-            position,
-            angle
-        )
-        posFrontLeft = rotateAround(
-            Vector(position.x + initialPosFrontLeft.x, position.y + initialPosFrontLeft.y),
-            position,
-            angle
-        )
-        posBackLeft = rotateAround(
-            Vector(position.x + initialPosBackLeft.x, position.y + initialPosBackLeft.y),
-            position,
-            angle
-        )
-        posBackRight = rotateAround(
-            Vector(position.x + initialPosBackRight.x, position.y + initialPosBackRight.y),
-            position,
-            angle
-        )
+        posFrontRight = rotateAround(position.getVectorSum(initialPosFrontRight), position, angle)
+        posFrontLeft = rotateAround(position.getVectorSum(initialPosFrontLeft), position, angle)
+        posBackLeft = rotateAround(position.getVectorSum(initialPosBackLeft), position, angle)
+        posBackRight = rotateAround(position.getVectorSum(initialPosBackRight), position, angle)
+        posFrontRightWheel = rotateAround(position.getVectorSum(initialPosFrontRightWheel), position, angle)
+        posFrontLeftWheel = rotateAround(position.getVectorSum(initialPosFrontLeftWheel), position, angle)
+        posBackLeftWheel = rotateAround(position.getVectorSum(initialPosBackLeftWheel), position, angle)
+        posBackRightWheel = rotateAround(position.getVectorSum(initialPosBackRightWheel), position, angle)
     }
 
     private fun rotateAround(point: Point, center: Point, angle: Double): Vector {

@@ -1,18 +1,25 @@
 package fr.lewon.circuit.designer.model.road
 
 import fr.lewon.circuit.designer.model.geometry.Point
-import javafx.scene.paint.Color
 import kotlin.math.cos
 import kotlin.math.sin
 
 abstract class RoadElement(
     val name: String,
-    val width: Int,
-    val height: Int,
+    val width: Double,
+    val height: Double,
     val obstacles: List<Obstacle>,
-    val color: Color = Color.BLACK
+    val type: RoadElementType = RoadElementType.STANDARD
 ) {
+    var rotation: Double = 0.0
+
     fun rotate(angle: Double) {
+        rotation += angle
+        if (rotation < 0) {
+            rotation += Math.PI * 2
+        } else if (rotation > Math.PI * 2) {
+            rotation -= Math.PI * 2
+        }
         obstacles.forEach {
             val newFrom = rotatePointAround(it.xFrom, it.yFrom, angle)
             val newTo = rotatePointAround(it.xTo, it.yTo, angle)
