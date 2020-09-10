@@ -3,9 +3,12 @@ package fr.lewon.circuit.designer.gui
 import fr.lewon.circuit.designer.model.Circuit
 import fr.lewon.circuit.designer.model.geometry.Point
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
+import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.layout.VBox
+import javafx.stage.Stage
 import java.net.URL
 import java.util.*
 import kotlin.math.max
@@ -36,8 +39,11 @@ class CircuitDesignerController : Initializable {
         ButtonDescriptor("Export", "export.png")
         { (circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane).exportCircuit() },
         ButtonDescriptor("Remove", "remove.png")
-        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane).removeRoad() }
+        { (circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane).removeRoad() },
+        ButtonDescriptor("Test circuit", "test_circuit.png")
+        { openTest() }
     )
+
     private var newTabCpt = 1
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
@@ -107,7 +113,7 @@ class CircuitDesignerController : Initializable {
     private fun generateCircuitTab(): Tab {
         val tab = Tab("Untitled ${newTabCpt++}")
         tab.setOnClosed { onCircuitClosed() }
-        val circuitPane = CircuitEditorPane(Circuit())
+        val circuitPane = CircuitEditorPane(Circuit(16))
         tab.content = circuitPane
         return tab
     }
@@ -137,6 +143,17 @@ class CircuitDesignerController : Initializable {
         if (circuitsTabPane.tabs.isEmpty()) {
             newCircuit()
         }
+    }
+
+    private fun openTest() {
+        val loader = FXMLLoader(javaClass.getResource("/scenes/circuit_scene.fxml"))
+        val root = loader.load() as VBox
+        val currentCircuitEditorPane = circuitsTabPane.selectionModel.selectedItem.content as CircuitEditorPane
+        val controller = loader.getController() as CircuitTestController
+        controller.initCircuit(currentCircuitEditorPane.circuit)
+        val stage = Stage()
+        stage.scene = Scene(root)
+        stage.show()
     }
 
 }

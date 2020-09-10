@@ -14,8 +14,8 @@ abstract class RoadElement(
 ) {
     fun rotate(angle: Double) {
         obstacles.forEach {
-            val newFrom = rotatePointAround(it.xFrom, it.yFrom, 0.5, 0.5, angle)
-            val newTo = rotatePointAround(it.xTo, it.yTo, 0.5, 0.5, angle)
+            val newFrom = rotatePointAround(it.xFrom, it.yFrom, angle)
+            val newTo = rotatePointAround(it.xTo, it.yTo, angle)
             it.xFrom = newFrom.x
             it.yFrom = newFrom.y
             it.xTo = newTo.x
@@ -23,9 +23,9 @@ abstract class RoadElement(
         }
     }
 
-    private fun rotatePointAround(x: Double, y: Double, centerX: Double, centerY: Double, angle: Double): Point {
-        val newX = cos(angle) * (x - centerX) + sin(angle) * (y - centerY) + centerX
-        val newY = -sin(angle) * (x - centerX) + cos(angle) * (y - centerY) + centerY
+    private fun rotatePointAround(x: Double, y: Double, angle: Double): Point {
+        val newX = cos(angle) * (x - 0.5) + sin(angle) * (y - 0.5) + 0.5
+        val newY = -sin(angle) * (x - 0.5) + cos(angle) * (y - 0.5) + 0.5
         return Point(newX, newY)
     }
 }

@@ -32,10 +32,10 @@ class CircuitEditorPane(val circuit: Circuit) : GridPane() {
 
     init {
         padding = Insets(5.0)
-        for (row in 0 until 16) {
+        for (row in 0 until circuit.size) {
             roadElements.add(ArrayList())
             colors.add(ArrayList())
-            for (col in 0 until 16) {
+            for (col in 0 until circuit.size) {
                 val stack = StackPane()
                 val roadElementPane = RoadElementPane(row, col)
                 val colorRectangle = Rectangle()
@@ -46,7 +46,7 @@ class CircuitEditorPane(val circuit: Circuit) : GridPane() {
                 stack.children.add(colorRectangle)
                 stack.children.add(roadElementPane)
 
-                stack.setOnMouseMoved { onHover(it, row, col) }
+                stack.setOnMouseMoved { onHover(row, col) }
                 stack.setOnMouseClicked { onClick(it, row, col) }
 
                 roadElementPane.prefWidthProperty().bind(stack.widthProperty())
@@ -64,21 +64,21 @@ class CircuitEditorPane(val circuit: Circuit) : GridPane() {
 
     fun getRealWidth(): Double {
         val firstNode = getNodeByRowColIndex(0, 0) as StackPane? ?: return 0.0
-        val lastNode = getNodeByRowColIndex(0, 15) as StackPane? ?: return 0.0
+        val lastNode = getNodeByRowColIndex(0, circuit.size - 1) as StackPane? ?: return 0.0
         return lastNode.layoutX + lastNode.width - firstNode.layoutX
     }
 
     fun getRealHeight(): Double {
         val firstNode = getNodeByRowColIndex(0, 0) as StackPane? ?: return 0.0
-        val lastNode = getNodeByRowColIndex(15, 0) as StackPane? ?: return 0.0
+        val lastNode = getNodeByRowColIndex(circuit.size - 1, 0) as StackPane? ?: return 0.0
         return lastNode.layoutY + lastNode.height - firstNode.layoutY + 30
     }
 
     fun translate(translateX: Double, translateY: Double) {
         dx = translateX
         dy = translateY
-        for (row in 0 until 16) {
-            for (col in 0 until 16) {
+        for (row in 0 until circuit.size) {
+            for (col in 0 until circuit.size) {
                 val child = getNodeByRowColIndex(row, col) as StackPane?
                 child?.translateX = dx
                 child?.translateY = dy
@@ -87,8 +87,8 @@ class CircuitEditorPane(val circuit: Circuit) : GridPane() {
     }
 
     fun updateVisual() {
-        for (row in 0 until 16) {
-            for (col in 0 until 16) {
+        for (row in 0 until circuit.size) {
+            for (col in 0 until circuit.size) {
                 val child = getNodeByRowColIndex(row, col) as StackPane?
                 child?.minWidth = tileSz
                 child?.minHeight = tileSz
@@ -195,10 +195,6 @@ class CircuitEditorPane(val circuit: Circuit) : GridPane() {
         resetColor(tile)
     }
 
-    private fun unSelectTile(row: Int, col: Int) {
-        unSelectTile(roadElements[row][col])
-    }
-
     private fun updateLastSelectedTile(newTile: RoadElementPane) {
         val oldLastSelectedTile = lastSelectedTile
         lastShiftSelectedTiles.clear()
@@ -214,16 +210,18 @@ class CircuitEditorPane(val circuit: Circuit) : GridPane() {
         updateLastSelectedTile(roadElements[row][col])
     }
 
-    private fun onHover(e: MouseEvent, row: Int, col: Int) {
+    private fun onHover(row: Int, col: Int) {
         val oldHoveredTile = hoveredTile
         hoveredTile = roadElements[row][col]
         oldHoveredTile?.let { resetColor(it.row, it.col) }
         hoveredTile?.let { resetColor(it.row, it.col) }
     }
 
-    fun updateRoadElement(element: RoadElement) {
+    fun updateRoadElement(elementBuilder: () -> RoadElement) {
         for (tile in selectedTiles) {
+            val element = elementBuilder.invoke()
             tile.updateRoadElement(element)
+            circuit.setElement(tile.row, tile.col, element)
         }
     }
 
@@ -232,7 +230,10 @@ class CircuitEditorPane(val circuit: Circuit) : GridPane() {
     }
 
     fun removeRoad() {
-        selectedTiles.forEach { it.updateRoadElement(null) }
+        selectedTiles.forEach {
+            it.updateRoadElement(null)
+            circuit.setElement(it.row, it.col, null)
+        }
     }
 
     fun rotateRight() {

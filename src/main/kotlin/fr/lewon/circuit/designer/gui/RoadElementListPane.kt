@@ -33,7 +33,7 @@ class RoadElementListPane(val circuitEditorPaneSupplier: () -> CircuitEditorPane
                     it.prefHeightProperty().bind(it.prefWidthProperty())
                     it.minHeightProperty().bind(it.prefWidthProperty())
                     Tooltip.install(it, Tooltip(element.name))
-                    it.setOnMouseClicked { circuitEditorPaneSupplier.invoke().updateRoadElement(elementBuilder.invoke()) }
+                    it.setOnMouseClicked { circuitEditorPaneSupplier.invoke().updateRoadElement(elementBuilder) }
                 }, col, row, 1, 1)
                 col++
                 if (col == colCount) {

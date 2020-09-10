@@ -19,4 +19,8 @@ class Circuit(val size: Int) {
         return roadElements[row][col]
     }
 
+    fun setElement(row: Int, col: Int, element: RoadElement?) {
+        roadElements[row][col] = element
+    }
+
 }
