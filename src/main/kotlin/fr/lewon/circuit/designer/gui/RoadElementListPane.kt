@@ -6,6 +6,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.Separator
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.GridPane
+import javafx.scene.layout.VBox
 
 class RoadElementListPane(val circuitEditorPaneSupplier: () -> CircuitEditorPane) : GridPane() {
 
@@ -27,14 +28,18 @@ class RoadElementListPane(val circuitEditorPaneSupplier: () -> CircuitEditorPane
             add(Separator(Orientation.HORIZONTAL), col, row++, 3, 1)
             for (elementBuilder in category.roadElementBuilders) {
                 val element = elementBuilder.invoke()
-                add(RoadElementPane(row, col).also {
+                val labeledRoad = VBox()
+                val roadElementPane = RoadElementPane(row, col).also {
                     it.updateRoadElement(element)
                     it.prefWidthProperty().bind(widthProperty().divide(colCount))
                     it.prefHeightProperty().bind(it.prefWidthProperty())
                     it.minHeightProperty().bind(it.prefWidthProperty())
                     Tooltip.install(it, Tooltip(element.name))
                     it.setOnMouseClicked { circuitEditorPaneSupplier.invoke().updateRoadElement(elementBuilder) }
-                }, col, row, 1, 1)
+                }
+                val lbl = Label(element.name)
+                labeledRoad.children.addAll(roadElementPane, lbl)
+                add(labeledRoad, col, row, 1, 1)
                 col++
                 if (col == colCount) {
                     col = 0

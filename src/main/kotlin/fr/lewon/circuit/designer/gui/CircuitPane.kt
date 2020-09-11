@@ -39,7 +39,8 @@ class CircuitPane(private val circuit: Circuit) : Pane() {
             }
         }
 
-        val start = circuit.getAllElements().first { it.type == RoadElementType.START || it.type == RoadElementType.LAP }
+        val start =
+            circuit.getAllElements().first { it.type == RoadElementType.START || it.type == RoadElementType.LAP }
         val pos = circuit.getElementPos(start) ?: Vector(0.5, 0.5)
 
         val car = Car(30.0, 0.1, 0.2, Color.RED).also {
@@ -50,7 +51,7 @@ class CircuitPane(private val circuit: Circuit) : Pane() {
             children.addAll(lines)
         }
         Thread {
-            while (true) {
+            while (carLinesByCar.isNotEmpty()) {
                 Thread.sleep(10)
                 Platform.runLater {
                     car.updateAll(if (moveUp) 300.0 else 0.0, 0.01)

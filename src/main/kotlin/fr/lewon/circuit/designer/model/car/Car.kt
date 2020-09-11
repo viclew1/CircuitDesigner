@@ -15,14 +15,14 @@ class Car(private val mass: Double, frontSz: Double, sideSz: Double, val color: 
     private var position = Vector(0.0, 0.0)
 
     private val initialPosFrontRightWheel = Vector(sideSz / 3, frontSz / 2)
-    private val initialPosFrontLeftWheel = Vector(sideSz / 3, - frontSz / 2)
-    private val initialPosBackRightWheel = Vector(- sideSz / 3, frontSz / 2)
-    private val initialPosBackLeftWheel = Vector(- sideSz / 3, - frontSz / 2)
+    private val initialPosFrontLeftWheel = Vector(sideSz / 3, -frontSz / 2)
+    private val initialPosBackRightWheel = Vector(-sideSz / 3, frontSz / 2)
+    private val initialPosBackLeftWheel = Vector(-sideSz / 3, -frontSz / 2)
 
     private val initialPosFrontRight = Vector(sideSz / 2, frontSz / 2)
-    private val initialPosFrontLeft = Vector(sideSz / 2, - frontSz / 2)
-    private val initialPosBackRight = Vector(- sideSz / 2, frontSz / 2)
-    private val initialPosBackLeft = Vector(- sideSz / 2, - frontSz / 2)
+    private val initialPosFrontLeft = Vector(sideSz / 2, -frontSz / 2)
+    private val initialPosBackRight = Vector(-sideSz / 2, frontSz / 2)
+    private val initialPosBackLeft = Vector(-sideSz / 2, -frontSz / 2)
 
     var posFrontRightWheel = initialPosFrontRightWheel
         private set
