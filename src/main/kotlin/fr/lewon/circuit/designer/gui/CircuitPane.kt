@@ -4,6 +4,7 @@ import fr.lewon.circuit.designer.model.Circuit
 import fr.lewon.circuit.designer.model.car.Car
 import fr.lewon.circuit.designer.model.geometry.Point
 import fr.lewon.circuit.designer.model.geometry.Vector
+import fr.lewon.circuit.designer.model.road.RoadElement
 import fr.lewon.circuit.designer.model.road.RoadElementType
 import javafx.application.Platform
 import javafx.scene.layout.Pane
@@ -11,6 +12,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.shape.Path
 import javafx.scene.shape.Shape
+import javafx.stage.Stage
 
 class CircuitPane(private val circuit: Circuit) : Pane() {
 
@@ -20,20 +22,22 @@ class CircuitPane(private val circuit: Circuit) : Pane() {
 
     var moveUp = false
 
-    val circuitLines = ArrayList<Line>()
+    val circuitLinesByRoadElement = HashMap<RoadElement, List<Line>>()
     val carLinesByCar = HashMap<Car, Array<Line>>()
 
     init {
         for (row in 0 until circuit.size) {
             for (col in 0 until circuit.size) {
                 circuit.getElement(row, col)?.let { road ->
+                    val lines = ArrayList<Line>()
+                    circuitLinesByRoadElement[road] = lines
                     for (obstacle in road.obstacles) {
                         val from = Point(tileSz * col + tileSz * obstacle.xFrom, tileSz * row + tileSz * obstacle.yFrom)
                         val to = Point(tileSz * col + tileSz * obstacle.xTo, tileSz * row + tileSz * obstacle.yTo)
                         val line = Line()
                         buildLine(line, from, to, 3.0, road.type.color)
                         children.add(line)
-                        circuitLines.add(line)
+                        lines.add(line)
                     }
                 }
             }
@@ -60,6 +64,7 @@ class CircuitPane(private val circuit: Circuit) : Pane() {
                     }
                 }
             }
+            println("End")
         }.start()
         setOnMousePressed {
             moveUp = true
@@ -71,14 +76,21 @@ class CircuitPane(private val circuit: Circuit) : Pane() {
         }
     }
 
+    fun initCloseRequest(stage: Stage) {
+        stage.setOnCloseRequest {
+            carLinesByCar.clear()
+        }
+    }
+
     private fun updateCar(car: Car) {
         val backLeftMult = car.posBackLeft.getVectorMult(tileSz)
         val backRightMult = car.posBackRight.getVectorMult(tileSz)
         val frontLeftMult = car.posFrontLeft.getVectorMult(tileSz)
         val frontRightMult = car.posFrontRight.getVectorMult(tileSz)
         carLinesByCar[car]?.let {
+            val currentRoad = circuit.getElement(car.position.y.toInt(), car.position.x.toInt())
             for (line in it) {
-                for (obs in circuitLines) {
+                for (obs in circuitLinesByRoadElement[currentRoad] ?: emptyList()) {
                     if ((Shape.intersect(line, obs) as Path).elements.isNotEmpty()) {
                         carLinesByCar.remove(car)
                         return

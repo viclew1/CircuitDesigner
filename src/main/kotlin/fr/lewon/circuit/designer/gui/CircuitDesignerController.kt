@@ -162,6 +162,7 @@ class CircuitDesignerController : Initializable {
         val controller = loader.getController() as CircuitTestController
         controller.initCircuit(circuit)
         val stage = Stage()
+        controller.circuitPane.initCloseRequest(stage)
         stage.initModality(Modality.WINDOW_MODAL)
         stage.initOwner(circuitsTabPane.scene.window as Stage)
         stage.scene = Scene(root)

@@ -12,7 +12,8 @@ class Car(private val mass: Double, frontSz: Double, sideSz: Double, val color: 
     var angle = 0.0
     var wheelAngle = angle
     private var enginePower = 0.0
-    private var position = Vector(0.0, 0.0)
+    var position = Vector(0.0, 0.0)
+        private set
 
     private val initialPosFrontRightWheel = Vector(sideSz / 3, frontSz / 2)
     private val initialPosFrontLeftWheel = Vector(sideSz / 3, -frontSz / 2)
