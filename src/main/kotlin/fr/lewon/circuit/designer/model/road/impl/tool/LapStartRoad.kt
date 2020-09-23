@@ -5,13 +5,15 @@ import fr.lewon.circuit.designer.model.road.RoadElement
 import fr.lewon.circuit.designer.model.road.RoadElementType
 import javafx.scene.paint.Color
 
-class LapStartRoad : RoadElement(
-    "Lap start road", 1.0, 1.0, listOf(
-        Obstacle(0.2, 0.0, 0.2, 0.3),
-        Obstacle(0.2, 0.7, 0.2, 1.0),
-        Obstacle(0.8, 0.0, 0.8, 0.3),
-        Obstacle(0.8, 0.7, 0.8, 1.0),
-        *Obstacle.generateCurve(0.2, 0.5, -Math.PI / 2, Math.PI, 0.2, 0.2, 10).toTypedArray(),
-        *Obstacle.generateCurve(0.8, 0.5, Math.PI / 2, Math.PI, 0.2, 0.2, 10).toTypedArray()
-    ), RoadElementType.LAP
-)
+class LapStartRoad : RoadElement("Lap start road", RoadElementType.LAP) {
+    override fun generateObstacles(): List<Obstacle> {
+        return listOf(
+            generateStraightObstacle(0.2, 0.0, 0.2, 0.3),
+            generateStraightObstacle(0.2, 0.7, 0.2, 1.0),
+            generateStraightObstacle(0.8, 0.0, 0.8, 0.3),
+            generateStraightObstacle(0.8, 0.7, 0.8, 1.0),
+            *generateCurveObstacle(0.2, 0.5, -Math.PI / 2, Math.PI, 0.2, 0.2, 10).toTypedArray(),
+            *generateCurveObstacle(0.8, 0.5, Math.PI / 2, Math.PI, 0.2, 0.2, 10).toTypedArray()
+        )
+    }
+}

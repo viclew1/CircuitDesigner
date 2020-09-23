@@ -17,10 +17,16 @@ class Circuit(val size: Int) {
     }
 
     fun getElement(row: Int, col: Int): RoadElement? {
+        if (row < 0 || row >= size || col < 0 || col >= size) {
+            return null
+        }
         return roadElements[row][col]
     }
 
     fun setElement(row: Int, col: Int, element: RoadElement?) {
+        if (row < 0 || row >= size || col < 0 || col >= size) {
+            return
+        }
         roadElements[row][col] = element
     }
 
@@ -40,11 +46,21 @@ class Circuit(val size: Int) {
         for (row in 0 until size) {
             for (col in 0 until size) {
                 if (getElement(row, col) == element) {
-                    return Vector(col.toDouble() + element.width / 2.0, row.toDouble() + element.height / 2.0)
+                    return Vector(col.toDouble() + 0.5, row.toDouble() + 0.5)
                 }
             }
         }
         return null
+    }
+
+    fun getElementsAround(row: Int, col: Int, i: Int): List<RoadElement> {
+        val elements = ArrayList<RoadElement>()
+        for (r in row - i..row + i) {
+            for (c in col - i..col + i) {
+                getElement(r, c)?.let { elements.add(it) }
+            }
+        }
+        return elements
     }
 
 }

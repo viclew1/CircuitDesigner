@@ -67,6 +67,12 @@
             <version>14</version>
         </dependency>
 
+        <dependency>
+            <groupId>NeuralNetworkLibrary</groupId>
+            <artifactId>NeuralNetworkLibrary</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <build>
