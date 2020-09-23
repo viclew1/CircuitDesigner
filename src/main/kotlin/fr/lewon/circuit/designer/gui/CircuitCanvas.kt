@@ -63,7 +63,8 @@ class CircuitCanvas(private val circuit: Circuit) : Trial, Canvas(1000.0, 1000.0
                 car.updateVisual()
                 car.render(gc)
             }
-            for (captor in ArrayList(captorVisualsByCar.values.flatten())) {
+            val captors = ArrayList(captorVisualsByCar.values)
+            for (captor in captors.flatten()) {
                 captor.updateVisual()
                 captor.render(gc)
             }
@@ -92,13 +93,15 @@ class CircuitCanvas(private val circuit: Circuit) : Trial, Canvas(1000.0, 1000.0
     override fun execute(population: MutableList<Individual>) {
         val brains = population.map {
             val car = Car(CarConfig())
-            CarBrain(car, this.circuit, it, listOf(
-                CarCaptor(car, - Math.PI / 2.0 + (Math.PI * 0.0 / 4.0), 10.0),
-                CarCaptor(car, - Math.PI / 2.0 + (Math.PI * 1.0 / 4.0), 10.0),
-                CarCaptor(car, - Math.PI / 2.0 + (Math.PI * 2.0 / 4.0), 10.0),
-                CarCaptor(car, - Math.PI / 2.0 + (Math.PI * 3.0 / 4.0), 10.0),
-                CarCaptor(car, - Math.PI / 2.0 + (Math.PI * 4.0 / 4.0), 10.0)
-            ))
+            CarBrain(
+                car, this.circuit, it, listOf(
+                    CarCaptor(car, -Math.PI / 2.0 + (Math.PI * 0.0 / 4.0), 10.0),
+                    CarCaptor(car, -Math.PI / 2.0 + (Math.PI * 1.0 / 4.0), 10.0),
+                    CarCaptor(car, -Math.PI / 2.0 + (Math.PI * 2.0 / 4.0), 10.0),
+                    CarCaptor(car, -Math.PI / 2.0 + (Math.PI * 3.0 / 4.0), 10.0),
+                    CarCaptor(car, -Math.PI / 2.0 + (Math.PI * 4.0 / 4.0), 10.0)
+                )
+            )
         }
         parcouredByCar.clear()
         carVisualByCar.clear()
@@ -114,7 +117,7 @@ class CircuitCanvas(private val circuit: Circuit) : Trial, Canvas(1000.0, 1000.0
             parcouredByCar[it.car] = HashSet()
             it.car.resetPosition(pos, -Math.PI / 2.0 - start.rotation)
             val visual = CarVisual(tileSz, it.car)
-            captorVisualsByCar[it.car] = it.captors.map {cc ->
+            captorVisualsByCar[it.car] = it.captors.map { cc ->
                 CarCaptorVisual(tileSz, cc)
             }
             carVisualByCar[it.car] = visual

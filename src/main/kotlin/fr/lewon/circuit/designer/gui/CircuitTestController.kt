@@ -4,7 +4,6 @@ import fr.lewon.Individual
 import fr.lewon.SelectionProcessor
 import fr.lewon.circuit.designer.model.Circuit
 import fr.lewon.nn.impl.NeuralNetworkClassic
-import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.layout.AnchorPane
 
@@ -30,7 +29,7 @@ class CircuitTestController {
             individuals.add(NeuralNetworkClassic(8, 5))
         }
         Thread {
-            val objectiveFitness = circuit.getAllElements().size * 10.0
+            val objectiveFitness = circuit.getAllElements().size * 10.0 + 1.0
             selectionProcessor.start(individuals, 1000, objectiveFitness, 0.1)
         }.start()
     }
