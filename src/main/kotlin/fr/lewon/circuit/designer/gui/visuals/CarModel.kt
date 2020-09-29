@@ -1,6 +1,8 @@
 package fr.lewon.circuit.designer.gui.visuals
 
 import fr.lewon.circuit.designer.model.car.Car
+import fr.lewon.circuit.designer.model.geometry.Polygon
+import fr.lewon.circuit.designer.model.geometry.Vector
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
@@ -8,7 +10,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Transform
 import kotlin.math.min
 
-class CarVisual(private val tileSz: Double, private val car: Car) : Visual() {
+class CarModel(private val tileSz: Double, private val car: Car) : VisualModel() {
 
     private val originalBounds: Rectangle
     private val originalRearLeftTire: Rectangle
@@ -17,8 +19,9 @@ class CarVisual(private val tileSz: Double, private val car: Car) : Visual() {
     private val originalFrontRightTire: Rectangle
     private val originalGravityCenterH: Line
     private val originalGravityCenterV: Line
+    private val originalHitbox: Polygon
 
-    val hitbox = Rectangle()
+    var hitbox = Polygon()
     private val bounds = Rectangle()
     private val rearLeftTire = Rectangle()
     private val rearRightTire = Rectangle()
@@ -39,6 +42,15 @@ class CarVisual(private val tileSz: Double, private val car: Car) : Visual() {
             cfg.cgToRear + cfg.cgToFront,
             cfg.halfWidth * 2.0
         )
+
+        originalHitbox = Polygon(listOf(
+            Vector(-cfg.cgToRear, -cfg.halfWidth),
+            Vector(cfg.cgToFront, -cfg.halfWidth),
+            Vector(cfg.cgToFront, cfg.halfWidth),
+            Vector(-cfg.cgToRear, cfg.halfWidth),
+            Vector(-cfg.cgToRear, -cfg.halfWidth)
+        ))
+
         bounds.style = "-fx-stroke-width: 2;"
         bounds.stroke = cfg.color
         bounds.fill = Color(cfg.color.red, cfg.color.green, cfg.color.blue, 0.6)
@@ -58,14 +70,13 @@ class CarVisual(private val tileSz: Double, private val car: Car) : Visual() {
     }
 
     override fun updateHitbox() {
-        val headingAngle = car.heading * 180.0 / Math.PI
-        hitbox.transforms.clear()
-        hitbox.transforms.add(Transform.rotate(headingAngle, car.position.x, car.position.y))
-        updateRectangle(hitbox, originalBounds, 1.0, 0.0, 0.0)
+        hitbox = originalHitbox.copy()
+        hitbox.translate(car.position.x, car.position.y)
+        hitbox.rotateAround(car.position.x, car.position.y, -car.heading)
     }
 
     override fun render(gc: GraphicsContext) {
-        gc.stroke = bounds.fill
+        gc.fill = bounds.fill
         fillRect(gc, bounds)
         gc.lineWidth = 3.0
         gc.stroke = car.carConfig.color
@@ -74,7 +85,7 @@ class CarVisual(private val tileSz: Double, private val car: Car) : Visual() {
         drawLine(gc, gravityCenterH)
         drawLine(gc, gravityCenterV)
         gc.lineWidth = 1.0
-        gc.stroke = Color.BLACK
+        gc.fill = Color.BLACK
         fillRect(gc, rearLeftTire)
         fillRect(gc, rearRightTire)
         fillRect(gc, frontLeftTire)

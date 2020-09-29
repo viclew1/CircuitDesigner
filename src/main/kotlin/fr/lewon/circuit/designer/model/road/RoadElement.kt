@@ -1,6 +1,6 @@
 package fr.lewon.circuit.designer.model.road
 
-import fr.lewon.circuit.designer.model.geometry.Point
+import fr.lewon.circuit.designer.model.geometry.Vector
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -53,18 +53,13 @@ abstract class RoadElement(val name: String, val type: RoadElementType = RoadEle
             rotation -= Math.PI * 2
         }
         obstacles.forEach {
-            val newFrom = rotatePointAround(it.xFrom, it.yFrom, angle)
-            val newTo = rotatePointAround(it.xTo, it.yTo, angle)
-            it.xFrom = newFrom.x
-            it.yFrom = newFrom.y
-            it.xTo = newTo.x
-            it.yTo = newTo.y
+            val rotatedFrom = Vector(it.xFrom, it.yFrom).getRotatedVector(0.5, 0.5, angle)
+            val rotatedTo = Vector(it.xTo, it.yTo).getRotatedVector(0.5, 0.5, angle)
+            it.xFrom = rotatedFrom.x
+            it.yFrom = rotatedFrom.y
+            it.xTo = rotatedTo.x
+            it.yTo = rotatedTo.y
         }
     }
 
-    private fun rotatePointAround(x: Double, y: Double, angle: Double): Point {
-        val newX = cos(angle) * (x - 0.5) + sin(angle) * (y - 0.5) + 0.5
-        val newY = -sin(angle) * (x - 0.5) + cos(angle) * (y - 0.5) + 0.5
-        return Point(newX, newY)
-    }
 }

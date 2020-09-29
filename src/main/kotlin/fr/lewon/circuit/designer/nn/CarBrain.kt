@@ -7,8 +7,8 @@ import fr.lewon.circuit.designer.model.car.CarInputs
 
 class CarBrain(val car: Car, val circuit: Circuit, val brain: Individual, val captors: List<CarCaptor>) {
 
-    fun generateInputs(): CarInputs {
-        val nnOutputs = brain.getOutputs(listOf(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0))
+    fun generateInputs(captorValues: List<Double>): CarInputs {
+        val nnOutputs = brain.getOutputs(listOf(*captorValues.toTypedArray()))
         val inputs = CarInputs()
         inputs.left = nnOutputs[0]
         inputs.right = nnOutputs[1]

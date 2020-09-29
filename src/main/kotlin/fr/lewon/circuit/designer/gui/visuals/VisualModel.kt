@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 
-abstract class Visual {
+abstract class VisualModel {
 
     abstract fun updateVisual()
 

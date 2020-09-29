@@ -53,10 +53,10 @@ class Circuit(val size: Int) {
         return null
     }
 
-    fun getElementsAround(row: Int, col: Int, i: Int): List<RoadElement> {
+    fun getElementsAround(row: Int, col: Int, range: Int): List<RoadElement> {
         val elements = ArrayList<RoadElement>()
-        for (r in row - i..row + i) {
-            for (c in col - i..col + i) {
+        for (r in row - range..row + range) {
+            for (c in col - range..col + range) {
                 getElement(r, c)?.let { elements.add(it) }
             }
         }
