@@ -40,10 +40,10 @@ object IntersectionUtil {
     }
 
     fun intersects(l1: Line, l2: Line): Boolean {
-        val p1 = l1.from
-        val q1 = l1.to
-        val p2 = l2.from
-        val q2 = l2.to
+        val p1 = l1.from()
+        val q1 = l1.to()
+        val p2 = l2.from()
+        val q2 = l2.to()
 
         val o1 = orientation(p1, q1, p2)
         val o2 = orientation(p1, q1, q2)

@@ -4,6 +4,8 @@ import fr.lewon.Individual
 import fr.lewon.SelectionProcessor
 import fr.lewon.circuit.designer.model.Circuit
 import fr.lewon.nn.impl.NeuralNetworkClassic
+import fr.lewon.selection.Selection
+import fr.lewon.selection.SelectionType
 import javafx.fxml.FXML
 import javafx.scene.layout.AnchorPane
 
@@ -23,10 +25,10 @@ class CircuitTestController {
         AnchorPane.setRightAnchor(circuitCanvas, 0.0)
         mainPane.children.add(circuitCanvas)
 
-        val selectionProcessor = SelectionProcessor(circuitCanvas)
+        val selectionProcessor = SelectionProcessor(circuitCanvas, SelectionType.TOURNAMENT_2.selectionImpl, 0.05, 0.6)
         val individuals = ArrayList<Individual>()
         for (i in 0 until 100) {
-            individuals.add(NeuralNetworkClassic(8, 5))
+            individuals.add(NeuralNetworkClassic(9, 5))
         }
         Thread {
             val objectiveFitness = circuit.getAllElements().size * 10.0 + 1.0

@@ -101,8 +101,8 @@ class CircuitCanvas(private val circuit: Circuit) : Trial, Canvas(1000.0, 1000.0
         val brains = population.map {
             val car = Car(CarConfig())
             CarBrain(
-                car, this.circuit, it, List(8) { i ->
-                    CarCaptor(car, -Math.PI / 2.0 + (Math.PI * i / 7.0), 10.0)
+                car, this.circuit, it, List(9) { i ->
+                    CarCaptor(car, -Math.PI / 2.0 + (Math.PI * i / 8.0), 10.0)
                 }
             )
         }
@@ -129,11 +129,11 @@ class CircuitCanvas(private val circuit: Circuit) : Trial, Canvas(1000.0, 1000.0
 
         var currentBrains = brains
         var cpt = 0
-        while (currentBrains.isNotEmpty() && cpt < 2000) {
+        while (currentBrains.isNotEmpty() && cpt < 10000) {
             val newCurrentBrains = ArrayList<CarBrain>()
             for (brain in currentBrains) {
                 val captorModels = captorModelsByCar[brain.car] ?: emptyList()
-                if (updateCar(brain.car, brain.generateInputs(captorModels.map { it.length }))) {
+                if (updateCar(brain.car, brain.generateInputs(captorModels.map { 1.0 - it.length / it.maxLength }))) {
                     newCurrentBrains.add(brain)
                 }
             }

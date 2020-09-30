@@ -1,8 +1,16 @@
 package fr.lewon.circuit.designer.model.geometry
 
-class Line(val from: Vector, val to: Vector): Shape(listOf(from, to)) {
+class Line(from: Vector, to: Vector): Shape(listOf(from, to)) {
 
     override fun copy(): Line {
-        return Line(points[0], points[1])
+        return Line(from(), to())
+    }
+
+    fun from(): Vector {
+        return points[0]
+    }
+
+    fun to(): Vector {
+        return points[1]
     }
 }

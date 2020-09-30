@@ -6,18 +6,13 @@ import fr.lewon.circuit.designer.nn.CarCaptor
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
-import javafx.scene.shape.Path
-import javafx.scene.shape.Shape
-import javafx.scene.transform.Transform
 import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
 
 class CarCaptorModel(private val tileSz: Double, private val carCaptor: CarCaptor) : VisualModel() {
 
-    var length = carCaptor.maxLength
+    val maxLength = carCaptor.maxLength
+    var length = maxLength
         private set
-    private var tempLength = carCaptor.maxLength
 
     lateinit var hitbox: fr.lewon.circuit.designer.model.geometry.Line
     private val visualLine = Line()
@@ -28,22 +23,22 @@ class CarCaptorModel(private val tileSz: Double, private val carCaptor: CarCapto
     }
 
     override fun updateVisual() {
-        visualLine.startX = hitbox.from.x * tileSz
-        visualLine.startY = hitbox.from.y * tileSz
-        visualLine.endX = hitbox.to.x * tileSz
-        visualLine.endY = hitbox.to.y * tileSz
+        visualLine.startX = hitbox.from().x * tileSz
+        visualLine.startY = hitbox.from().y * tileSz
+        visualLine.endX = hitbox.to().x * tileSz
+        visualLine.endY = hitbox.to().y * tileSz
     }
 
     fun updateLength(obstacles: List<fr.lewon.circuit.designer.model.geometry.Line>) {
-        tempLength = carCaptor.maxLength
-        updateHitbox()
-        if (!lineIntersectsAny(hitbox, obstacles)) {
+        var tempLength = maxLength
+        var tempHitbox = buildHitbox(tempLength)
+        if (!lineIntersectsAny(tempHitbox, obstacles)) {
             this.length = tempLength
             return
         }
         var lastIntersected = true
         var minus = true
-        var delta = length
+        var delta = tempLength
         for (i in 0..10) {
             val newLength = if (minus) {
                 tempLength - delta / 2.0
@@ -52,8 +47,8 @@ class CarCaptorModel(private val tileSz: Double, private val carCaptor: CarCapto
             }
             delta = abs(tempLength - newLength)
             tempLength = newLength
-            updateHitbox()
-            val newLastIntersected = lineIntersectsAny(hitbox, obstacles)
+            tempHitbox = buildHitbox(tempLength)
+            val newLastIntersected = lineIntersectsAny(tempHitbox, obstacles)
             if (newLastIntersected != lastIntersected) {
                 minus = !minus
             }
@@ -74,15 +69,22 @@ class CarCaptorModel(private val tileSz: Double, private val carCaptor: CarCapto
         return false
     }
 
-    override fun updateHitbox() {
-        hitbox = fr.lewon.circuit.designer.model.geometry.Line(Vector(0.0, 0.0), Vector(tempLength, 0.0)).also {
-            it.rotateAround(0.0, 0.0, carCaptor.angle + carCaptor.car.heading)
-            it.translate(carCaptor.car.position.x, carCaptor.car.position.y)
+    private fun buildHitbox(l: Double): fr.lewon.circuit.designer.model.geometry.Line {
+        return fr.lewon.circuit.designer.model.geometry.Line(
+            Vector(carCaptor.car.position.x, carCaptor.car.position.y),
+            Vector(carCaptor.car.position.x + l, carCaptor.car.position.y)
+        ).also {
+            val angle = -carCaptor.angle - carCaptor.car.heading
+            it.rotateAround(carCaptor.car.position.x, carCaptor.car.position.y, angle)
         }
     }
 
+    override fun updateHitbox() {
+        hitbox = buildHitbox(length)
+    }
+
     override fun render(gc: GraphicsContext) {
-        gc.stroke = Color(Color.WHITE.red, Color.WHITE.green, Color.WHITE.blue, 0.2)
+        gc.stroke = Color(1.0, 1.0, 1.0, 0.2)
         gc.lineWidth = 1.0
         drawLine(gc, visualLine)
         gc.stroke = Color.BLACK
